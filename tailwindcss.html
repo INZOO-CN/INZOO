@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VPN客户端&管理系统 | VPN Client & Management System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#165DFF',
+                    secondary: '#36D399',
+                    neutral: {
+                        100: '#F3F4F6',
+                        200: '#E5E7EB',
+                        300: '#D1D5DB',
+                        400: '#9CA3AF',
+                        500: '#6B7280',
+                        600: '#4B5563',
+                        700: '#374151',
+                        800: '#1F2937',
+                        900: '#111827'
+                    }
+                },
+                fontFamily: {
+                    sans: ['Inter', 'system-ui', 'sans-serif'],
+                    mono: ['Consolas', 'Monaco', 'monospace']
+                },
+                boxShadow: {
+                    'card': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
+                    'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                }
+            }
+        }
+    }
+</script>
+<style type="text/tailwindcss">
+    @layer utilities {
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .transition-custom {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #165DFF 0%, #0E42CC 100%);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    }
+</style>
+</head>
+<body class="bg-gray-50 font-sans text-neutral-800">
+<!-- 导航栏 -->
+<nav class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transition-all duration-300" id="navbar">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <i class="fa fa-shield-alt text-primary text-2xl"></i>
+            <span class="text-xl font-bold text-neutral-800">VPN客户端&管理系统</span>
+        </div>
+        <div class="lang-toggle flex space-x-2">
+            <button class="lang-btn bg-primary text-white px-4 py-2 rounded-lg shadow-md transition-all hover:bg-primary/90 active:scale-95" id="cn-btn">
+                <i class="fa fa-language mr-1"></i> 中文
+            </button>
+            <button class="lang-btn bg-white text-neutral-700 px-4 py-2 rounded-lg shadow-md transition-all hover:bg-gray-100 active:scale-95" id="en-btn">
+                <i class="fa fa-globe mr-1"></i> English
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- 免责声明 -->
+<div class="bg-red-50 border-l-4 border-red-500 mt-16 py-4 px-6">
+    <div class="container mx-auto">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fa fa-exclamation-triangle text-red-500 text-xl"></i>
+            </div>
+            <div class="ml-3">
+                <p class="cn text-red-800 font-medium">
+                    重要提示：本程序与腾讯云无关。本系统仅利用腾讯云提供的基础设施服务和API接口，由映筑视觉INZOO独立开发。
+                </p>
+                <p class="en text-red-800 font-medium">
+                    Important Notice: This program is not affiliated with Tencent Cloud. This system solely utilizes the infrastructure services and API interfaces provided by Tencent Cloud and is independently developed by INZOO Visual Design.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 主要内容 -->
+<main class="container mx-auto px-4 pt-6 pb-16">
+    <!-- 英雄区域 -->
+    <section class="mb-12 bg-gradient-blue text-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-8 md:p-12 flex flex-col md:flex-row items-center">
+            <div class="md:w-2/3 mb-6 md:mb-0">
+                <h1 class="cn text-[clamp(2rem,5vw,3rem)] font-bold mb-4 text-shadow">VPN客户端&管理系统</h1>
+                <h1 class="en text-[clamp(2rem,5vw,3rem)] font-bold mb-4 text-shadow">VPN Client & Management System</h1>
+                <p class="cn text-lg opacity-90 mb-6">感谢您选择我们的VPN客户端&管理系统。本指南将帮助您完成系统的安装和配置。</p>
+                <p class="en text-lg opacity-90 mb-6">Thank you for choosing our VPN Client & Management System. This guide will help you install and configure the system.</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#requirements" class="bg-white text-primary px-6 py-3 rounded-lg font-medium shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                        <i class="fa fa-list-check mr-2"></i>
+                        <span class="cn">查看环境要求</span>
+                        <span class="en">View Requirements</span>
+                    </a>
+                    <a href="#installation" class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition-all hover:-translate-y-1">
+                        <i class="fa fa-cogs mr-2"></i>
+                        <span class="cn">开始安装</span>
+                        <span class="en">Start Installation</span>
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/3 flex justify-center">
+                <img src="https://picsum.photos/seed/vpn/400/300" alt="VPN Client & Management System" class="rounded-lg shadow-xl transform hover:scale-105 transition-all duration-500">
+            </div>
+        </div>
+    </section>
+
+    <!-- 环境要求 -->
+    <section id="requirements" class="mb-12 bg-white rounded-2xl shadow-card p-6 md:p-8 transition-custom hover:shadow-card-hover">
+        <h2 class="cn text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-check-circle text-primary mr-2"></i> 一、环境要求
+        </h2>
+        <h2 class="en text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-check-circle text-primary mr-2"></i> 1. Environment Requirements
+        </h2>
+
+        <div class="cn">
+            <p class="mb-6 text-neutral-700">在安装和运行此VPN客户端&管理系统之前，请确保你的服务器满足以下环境要求：</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-server text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">Web 服务器</h3>
+                            <p class="text-neutral-600">Apache 2.4 或 Nginx 1.14 及以上版本</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-code text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">PHP 版本</h3>
+                            <p class="text-neutral-600">PHP 8.1 或更高版本</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-database text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">数据库</h3>
+                            <p class="text-neutral-600">MySQL 5.6 或更高版本</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-cloud text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">腾讯云账号</h3>
+                            <p class="text-neutral-600">腾讯云账号及相应的 API 密钥</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="en">
+            <p class="mb-6 text-neutral-700">Before installing and running this VPN Client & Management System, please ensure your server meets the following requirements:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-server text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">Web Server</h3>
+                            <p class="text-neutral-600">Apache 2.4 or Nginx 1.14 and above</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-code text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">PHP Version</h3>
+                            <p class="text-neutral-600">PHP 8.1 or higher</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-database text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">Database</h3>
+                            <p class="text-neutral-600">MySQL 5.6 or higher</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-cloud text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2">Tencent Cloud Account</h3>
+                            <p class="text-neutral-600">Tencent Cloud account and corresponding API keys</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 安装步骤 -->
+    <section id="installation" class="mb-12 bg-white rounded-2xl shadow-card p-6 md:p-8 transition-custom hover:shadow-card-hover">
+        <h2 class="cn text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-wrench text-primary mr-2"></i> 二、安装步骤
+        </h2>
+        <h2 class="en text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-wrench text-primary mr-2"></i> 2. Installation Steps
+        </h2>
+
+        <!-- 下载项目代码 -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h3 class="cn text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">1</span>
+                下载项目代码
+            </h3>
+            <h3 class="en text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">1</span>
+                Download Project Code
+            </h3>
+
+            <div class="cn">
+                <p class="mb-4 text-neutral-700">从 GitHub 仓库克隆项目代码到你的服务器：</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide">git clone &lt;项目仓库地址&gt;</pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> 复制
+                    </button>
+                </div>
+            </div>
+            <div class="en">
+                <p class="mb-4 text-neutral-700">Clone the project code from the GitHub repository to your server:</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide">git clone &lt;Project Repository URL&gt;</pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配置数据库 -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h3 class="cn text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">2</span>
+                配置数据库
+            </h3>
+            <h3 class="en text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">2</span>
+                Configure Database
+            </h3>
+
+            <div class="cn">
+                <p class="mb-4 text-neutral-700">打开 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">config.php</code> 文件，配置数据库连接信息：</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide text-sm">
+// 数据库配置
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'your_database_name');
+define('DB_USER', 'your_database_user');
+define('DB_PASSWORD', 'your_database_password');
+                    </pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> 复制
+                    </button>
+                </div>
+                <p class="mt-4 text-neutral-700">请将 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_database_name</code>、<code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_database_user</code> 和 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_database_password</code> 替换为你自己的数据库名称、用户名和密码。</p>
+            </div>
+            <div class="en">
+                <p class="mb-4 text-neutral-700">Open the <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">config.php</code> file and configure the database connection information:</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide text-sm">
+// Database Configuration
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'your_database_name');
+define('DB_USER', 'your_database_user');
+define('DB_PASSWORD', 'your_database_password');
+                    </pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> Copy
+                    </button>
+                </div>
+                <p class="mt-4 text-neutral-700">Please replace <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_database_name</code>, <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_database_user</code>, and <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_database_password</code> with your own database name, username, and password.</p>
+            </div>
+        </div>
+
+        <!-- 配置腾讯云 API -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h3 class="cn text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">3</span>
+                配置腾讯云 API
+            </h3>
+            <h3 class="en text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">3</span>
+                Configure Tencent Cloud API
+            </h3>
+
+            <div class="cn">
+                <p class="mb-4 text-neutral-700">同样在 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">config.php</code> 文件中，配置腾讯云 API 信息：</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide text-sm">
+// 腾讯云API配置
+define('SECRET_ID', 'your_secret_id');
+define('SECRET_KEY', 'your_secret_key');
+define('REGION', 'your_region');
+define('INSTANCE_ID', 'your_instance_id'); // VPN服务器实例ID
+                    </pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> 复制
+                    </button>
+                </div>
+                <p class="mt-4 text-neutral-700">请将 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_secret_id</code>、<code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_secret_key</code>、<code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_region</code> 和 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_instance_id</code> 替换为你自己的腾讯云 API 密钥、区域和 VPN 服务器实例 ID。</p>
+            </div>
+            <div class="en">
+                <p class="mb-4 text-neutral-700">Also in the <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">config.php</code> file, configure Tencent Cloud API information:</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide text-sm">
+// Tencent Cloud API Configuration
+define('SECRET_ID', 'your_secret_id');
+define('SECRET_KEY', 'your_secret_key');
+define('REGION', 'your_region');
+define('INSTANCE_ID', 'your_instance_id'); // VPN Server Instance ID
+                    </pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> Copy
+                    </button>
+                </div>
+                <p class="mt-4 text-neutral-700">Please replace <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_secret_id</code>, <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_secret_key</code>, <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_region</code>, and <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_instance_id</code> with your own Tencent Cloud API keys, region, and VPN server instance ID.</p>
+            </div>
+        </div>
+
+        <!-- 创建数据库表 -->
+        <div class="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h3 class="cn text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">4</span>
+                创建数据库表
+            </h3>
+            <h3 class="en text-xl font-bold mb-4 text-neutral-800 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">4</span>
+                Create Database Tables
+            </h3>
+
+            <div class="cn">
+                <p class="mb-4 text-neutral-700">使用 MySQL 客户端连接到你的数据库，并执行以下 SQL 语句创建所需的表：</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide text-sm">
+-- 创建用户表
+CREATE TABLE users (
+id INT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(255) NOT NULL UNIQUE,
+password_hash VARCHAR(255) NOT NULL,
+is_active TINYINT(1) DEFAULT 0,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建VPN连接记录表
+CREATE TABLE vpn_connections (
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT NOT NULL,
+connection_time DATETIME NOT NULL,
+disconnection_time DATETIME,
+ip_address VARCHAR(45) NOT NULL,
+country VARCHAR(100),
+bytes_sent BIGINT DEFAULT 0,
+bytes_received BIGINT DEFAULT 0,
+FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- 创建操作日志表
+CREATE TABLE operation_logs (
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT NOT NULL,
+operation TEXT NOT NULL,
+type VARCHAR(255) NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+                    </pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> 复制
+                    </button>
+                </div>
+            </div>
+            <div class="en">
+                <p class="mb-4 text-neutral-700">Connect to your database using a MySQL client and execute the following SQL statements to create the required tables:</p>
+                <div class="relative">
+                    <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide text-sm">
+-- Create Users Table
+CREATE TABLE users (
+id INT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(255) NOT NULL UNIQUE,
+password_hash VARCHAR(255) NOT NULL,
+is_active TINYINT(1) DEFAULT 0,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create VPN Connections Table
+CREATE TABLE vpn_connections (
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT NOT NULL,
+connection_time DATETIME NOT NULL,
+disconnection_time DATETIME,
+ip_address VARCHAR(45) NOT NULL,
+country VARCHAR(100),
+bytes_sent BIGINT DEFAULT 0,
+bytes_received BIGINT DEFAULT 0,
+FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Create Operation Logs Table
+CREATE TABLE operation_logs (
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT NOT NULL,
+operation TEXT NOT NULL,
+type VARCHAR(255) NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+                    </pre>
+                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                        <i class="fa fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 访问系统 -->
+    <section id="access" class="mb-12 bg-white rounded-2xl shadow-card p-6 md:p-8 transition-custom hover:shadow-card-hover">
+        <h2 class="cn text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-link text-primary mr-2"></i> 三、访问系统
+        </h2>
+        <h2 class="en text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-link text-primary mr-2"></i> 3. Access the System
+        </h2>
+
+        <div class="cn">
+            <p class="mb-6 text-neutral-700">完成上述步骤后，你可以通过浏览器访问系统的登录页面：</p>
+            <div class="relative">
+                <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide">http://your_server_domain/login.php</pre>
+                <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                    <i class="fa fa-copy"></i> 复制
+                </button>
+            </div>
+            <p class="mt-4 text-neutral-700">请将 <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_server_domain</code> 替换为你服务器的域名或 IP 地址。</p>
+        </div>
+        <div class="en">
+            <p class="mb-6 text-neutral-700">After completing the above steps, you can access the system's login page via your browser:</p>
+            <div class="relative">
+                <pre class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto scrollbar-hide">http://your_server_domain/login.php</pre>
+                <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded transition-all">
+                    <i class="fa fa-copy"></i> Copy
+                </button>
+            </div>
+            <p class="mt-4 text-neutral-700">Please replace <code class="bg-blue-100 text-primary px-2 py-1 rounded font-mono">your_server_domain</code> with your server's domain name or IP address.</p>
+        </div>
+    </section>
+
+    <!-- 注意事项 -->
+    <section id="notes" class="mb-12 bg-white rounded-2xl shadow-card p-6 md:p-8 transition-custom hover:shadow-card-hover">
+        <h2 class="cn text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-exclamation-circle text-primary mr-2"></i> 四、注意事项
+        </h2>
+        <h2 class="en text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-exclamation-circle text-primary mr-2"></i> 4. Notes
+        </h2>
+
+        <div class="cn">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-red-50 p-5 rounded-xl border-l-4 border-red-500">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-red-100 p-3 rounded-lg">
+                            <i class="fa fa-shield text-red-500 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2 text-red-800">安全建议</h3>
+                            <p class="text-neutral-600">请确保你的服务器安全，建议使用防火墙和 SSL 证书。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 p-5 rounded-xl border-l-4 border-yellow-500">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-yellow-100 p-3 rounded-lg">
+                            <i class="fa fa-database text-yellow-500 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2 text-yellow-800">数据备份</h3>
+                            <p class="text-neutral-600">定期备份数据库，以防止数据丢失。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-bug text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2 text-neutral-800">故障排除</h3>
+                            <p class="text-neutral-600">如果遇到问题，请查看服务器日志文件以获取更多信息。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="en">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-red-50 p-5 rounded-xl border-l-4 border-red-500">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-red-100 p-3 rounded-lg">
+                            <i class="fa fa-shield text-red-500 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2 text-red-800">Security</h3>
+                            <p class="text-neutral-600">Please ensure your server is secure. It is recommended to use firewalls and SSL certificates.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 p-5 rounded-xl border-l-4 border-yellow-500">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-yellow-100 p-3 rounded-lg">
+                            <i class="fa fa-database text-yellow-500 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2 text-yellow-800">Backup</h3>
+                            <p class="text-neutral-600">Regularly back up your database to prevent data loss.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-primary">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
+                            <i class="fa fa-bug text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold mb-2 text-neutral-800">Troubleshooting</h3>
+                            <p class="text-neutral-600">If you encounter any issues, please check the server log files for more information.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 许可证 -->
+    <section class="mb-12 bg-white rounded-2xl shadow-card p-6 md:p-8 transition-custom hover:shadow-card-hover">
+        <h2 class="cn text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-file-text text-primary mr-2"></i> 许可证
+        </h2>
+        <h2 class="en text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-file-text text-primary mr-2"></i> License
+        </h2>
+
+        <div class="cn overflow-hidden">
+            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 max-h-64 overflow-y-auto">
+                <pre class="text-neutral-700 font-mono text-sm">
+MIT License
+
+Copyright (c) 2025 映筑视觉INZOO
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+                </pre>
+            </div>
+        </div>
+        <div class="en overflow-hidden">
+            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 max-h-64 overflow-y-auto">
+                <pre class="text-neutral-700 font-mono text-sm">
+MIT License
+
+Copyright (c) 2025 INZOO Visual Design
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+                </pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于开发者 -->
+    <section class="bg-white rounded-2xl shadow-card p-6 md:p-8 transition-custom hover:shadow-card-hover">
+        <h2 class="cn text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-user text-primary mr-2"></i> 关于开发者
+        </h2>
+        <h2 class="en text-2xl md:text-3xl font-bold mb-6 text-neutral-800 border-b-2 border-primary/20 pb-3">
+            <i class="fa fa-user text-primary mr-2"></i> About the Developer
+        </h2>
+
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="cn mb-6 md:mb-0 md:mr-8">
+                <div class="flex items-center mb-4">
+                    <img src="https://picsum.photos/seed/developer/100/100" alt="Developer" class="w-20 h-20 rounded-full object-cover border-4 border-primary/20">
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-neutral-800">映筑视觉INZOO</h3>
+                        <p class="text-neutral-600">专注于视觉设计和软件开发</p>
+                    </div>
+                </div>
+                <p class="text-neutral-700 mb-4">映筑视觉INZOO是一家专注于视觉设计和软件开发的团队，致力于创造高质量的数字产品和用户体验。</p>
+                <a href="https://orcid.org/0009-0005-8345-6998" target="_blank" class="inline-flex items-center text-primary font-medium hover:underline">
+                    <i class="fa fa-link mr-2"></i> 联系开发者
+                </a>
+            </div>
+            <div class="en">
+                <div class="flex items-center mb-4">
+                    <img src="https://picsum.photos/seed/developer/100/100" alt="Developer" class="w-20 h-20 rounded-full object-cover border-4 border-primary/20">
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-neutral-800">INZOO Visual Design</h3>
+                        <p class="text-neutral-600">Specializing in Visual Design and Software Development</p>
+                    </div>
+                </div>
+                <p class="text-neutral-700 mb-4">INZOO Visual Design is a team specializing in visual design and software development, committed to creating high-quality digital products and user experiences.</p>
+                <a href="https://orcid.org/0009-0005-8345-6998" target="_blank" class="inline-flex items-center text-primary font-medium hover:underline">
+                    <i class="fa fa-link mr-2"></i> Contact Developer
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-neutral-800 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0">
+                <div class="flex items-center">
+                    <i class="fa fa-shield-alt text-primary text-2xl mr-2"></i>
+                    <span class="text-xl font-bold">VPN客户端&管理系统</span>
+                </div>
+                <p class="text-neutral-400 mt-2">© 2025 映筑视觉INZOO. 保留所有权利。</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="text-neutral-400 hover:text-white transition-all">
+                    <i class="fa fa-github text-xl"></i>
+                </a>
+                <a href="#" class="text-neutral-400 hover:text-white transition-all">
+                    <i class="fa fa-twitter text-xl"></i>
+                </a>
+                <a href="#" class="text-neutral-400 hover:text-white transition-all">
+                    <i class="fa fa-linkedin text-xl"></i>
+                </a>
+            </div>
+        </div>
+        <div class="border-t border-neutral-700 mt-8 pt-8 text-center text-neutral-400">
+            <p>本安装文档仅供参考，请根据实际情况进行调整。</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 初始设置 - 默认显示中文内容
+    document.querySelectorAll('.cn').forEach(el => el.style.display = 'block');
+    document.querySelectorAll('.en').forEach(el => el.style.display = 'none');
+
+    // 语言切换功能
+    document.getElementById('cn-btn').addEventListener('click', function() {
+        document.querySelectorAll('.cn').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.en').forEach(el => el.style.display = 'none');
+        document.getElementById('cn-btn').classList.add('bg-primary', 'text-white');
+        document.getElementById('cn-btn').classList.remove('bg-white', 'text-neutral-700');
+        document.getElementById('en-btn').classList.add('bg-white', 'text-neutral-700');
+        document.getElementById('en-btn').classList.remove('bg-primary', 'text-white');
+    });
+
+    document.getElementById('en-btn').addEventListener('click', function() {
+        document.querySelectorAll('.cn').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.en').forEach(el => el.style.display = 'block');
+        document.getElementById('en-btn').classList.add('bg-primary', 'text-white');
+        document.getElementById('en-btn').classList.remove('bg-white', 'text-neutral-700');
+        document.getElementById('cn-btn').classList.add('bg-white', 'text-neutral-700');
+        document.getElementById('cn-btn').classList.remove('bg-primary', 'text-white');
+    });
+
+    // 滚动效果
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 10) {
+            navbar.classList.add('py-2', 'shadow-lg');
+            navbar.classList.remove('py-3', 'shadow-md');
+        } else {
+            navbar.classList.add('py-3', 'shadow-md');
+            navbar.classList.remove('py-2', 'shadow-lg');
+        }
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // 复制按钮功能
+    document.querySelectorAll('.bg-neutral-800 + button').forEach(button => {
+        button.addEventListener('click', function() {
+            const preElement = this.previousElementSibling;
+            const textToCopy = preElement.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-check"></i> 已复制';
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+</html>

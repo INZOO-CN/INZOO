@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIT License | 映筑视觉INZOO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#00B42A',
+                        neutral: '#86909C',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .animate-fade-in {
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-dark min-h-screen flex flex-col">
+    <!-- 导航栏 -->
+    <header class="bg-white shadow-md fixed w-full z-10 transition-all duration-300" id="header">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-copyright text-primary text-xl"></i>
+                <h1 class="text-xl font-bold text-primary">映筑视觉INZOO</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="langToggle" class="px-3 py-1 rounded-md bg-light hover:bg-gray-200 transition-colors duration-200 text-sm font-medium">
+                    <i class="fa fa-language mr-1"></i> 切换语言
+                </button>
+                <a href="https://offs.inzoo.art/" class="text-gray-500 hover:text-primary transition-colors duration-200">
+                    <i class="fa fa-arrow-left mr-1"></i> 返回主页
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow pt-20 pb-10">
+        <div class="container mx-auto px-4">
+            <!-- 协议标题 -->
+            <div class="mb-8 text-center animate-fade-in">
+                <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-dark mb-2">MIT License</h1>
+                <p class="text-neutral text-lg max-w-3xl mx-auto text-balance"> 遵循MIT License 开发者：映筑视觉INZOO <span id="copyrightYear"></span> 
+                </p>
+                <div class="w-20 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <!-- 语言选项卡 -->
+            <div class="flex justify-center mb-8 animate-fade-in" style="animation-delay: 0.1s">
+                <div class="inline-flex bg-gray-100 rounded-lg p-1 shadow-sm">
+                    <button id="tab-en" class="tab-btn px-6 py-2 rounded-md bg-white text-primary font-medium shadow-sm">
+                        English
+                    </button>
+                    <button id="tab-zh" class="tab-btn px-6 py-2 rounded-md text-gray-600 font-medium">
+                        中文
+                    </button>
+                </div>
+            </div>
+
+            <!-- 协议内容 -->
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden animate-fade-in" style="animation-delay: 0.2s">
+                <!-- 英文协议 -->
+                <div id="content-en" class="p-8 space-y-6">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa fa-file-text-o text-primary text-xl"></i>
+                        <h2 class="text-xl font-bold text-dark">MIT License</h2>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg text-gray-700 space-y-4 overflow-y-auto max-h-[60vh] scrollbar-hide">
+                        <p>Permission is hereby granted, free of charge, to any person obtaining a copy
+                        of this software and associated documentation files (the "Software"), to deal
+                        in the Software without restriction, including without limitation the rights
+                        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                        copies of the Software, and to permit persons to whom the Software is
+                        furnished to do so, subject to the following conditions:</p>
+                        
+                        <p>The above copyright notice and this permission notice shall be included in all
+                        copies or substantial portions of the Software.</p>
+                        
+                        <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                        SOFTWARE.</p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-500">
+                            <i class="fa fa-info-circle mr-1"></i> This is a standard MIT License template. 
+                            For specific legal advice, please consult a qualified attorney.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 中文协议 -->
+                <div id="content-zh" class="p-8 space-y-6 hidden">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa fa-file-text-o text-primary text-xl"></i>
+                        <h2 class="text-xl font-bold text-dark">MIT许可协议</h2>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg text-gray-700 space-y-4 overflow-y-auto max-h-[60vh] scrollbar-hide">
+                        <p>特此授予任何获得本软件及其相关文档文件（“软件”）副本的个人免费许可，以无限制地处理本软件，包括但不限于使用、复制、修改、合并、发布、分发、再许可和/或销售软件的副本，并允许向其提供软件的个人这样做，但须遵守以下条件：</p>
+                        
+                        <p>上述版权声明和本许可声明应包含在软件的所有副本或重要部分中。</p>
+                        
+                        <p>软件按“原样”提供，不提供任何形式的保证，无论是明示的还是暗示的，包括但不限于适销性、特定用途适用性和非侵权性的保证。在任何情况下，作者或版权持有人均不对任何索赔、损害或其他责任负责，无论是因合同、侵权或其他原因引起的，与软件或其使用或其他交易有关。</p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-500">
+                            <i class="fa fa-info-circle mr-1"></i> 本页面提供的是标准MIT许可协议模板。
+                            如需具体法律建议，请咨询合格的法律顾问。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 确认区域 -->
+            <div class="max-w-4xl mx-auto mt-8 text-center animate-fade-in" style="animation-delay: 0.3s">
+                <p class="text-gray-600 mb-4">
+                    <i class="fa fa-lightbulb-o text-warning mr-1"></i> 
+                    通过使用本软件，即表示您同意遵守上述许可协议条款。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="https://mit-license.org/" class="px-8 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                        <i class="fa fa-download mr-2"></i> 下载协议文本
+                    </a>
+                    <a href="https://mit-license.org/" class="px-8 py-3 bg-light text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                        <i class="fa fa-question-circle mr-2"></i> 了解更多
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-500 text-sm">
+                        <span id="footerYear"></span> 遵循MIT License 开发者：映筑视觉INZOO
+                    </p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+                        <i class="fa fa-question-circle"></i> 帮助中心
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+                        <i class="fa fa-file-text-o"></i> 文档
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+                        <i class="fa fa-shield"></i> 隐私政策
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置版权年份
+            const currentYear = new Date().getFullYear();
+            document.getElementById('copyrightYear').textContent = currentYear;
+            document.getElementById('footerYear').textContent = currentYear;
+            
+            // 语言切换功能
+            const tabEn = document.getElementById('tab-en');
+            const tabZh = document.getElementById('tab-zh');
+            const contentEn = document.getElementById('content-en');
+            const contentZh = document.getElementById('content-zh');
+            const langToggle = document.getElementById('langToggle');
+            
+            tabEn.addEventListener('click', function() {
+                contentEn.classList.remove('hidden');
+                contentZh.classList.add('hidden');
+                tabEn.classList.add('bg-white', 'text-primary', 'shadow-sm');
+                tabEn.classList.remove('text-gray-600');
+                tabZh.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                tabZh.classList.add('text-gray-600');
+            });
+            
+            tabZh.addEventListener('click', function() {
+                contentEn.classList.add('hidden');
+                contentZh.classList.remove('hidden');
+                tabZh.classList.add('bg-white', 'text-primary', 'shadow-sm');
+                tabZh.classList.remove('text-gray-600');
+                tabEn.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                tabEn.classList.add('text-gray-600');
+            });
+            
+            langToggle.addEventListener('click', function() {
+                if (contentEn.classList.contains('hidden')) {
+                    tabEn.click();
+                } else {
+                    tabZh.click();
+                }
+            });
+            
+            // 滚动时改变导航栏样式
+            window.addEventListener('scroll', function() {
+                const header = document.getElementById('header');
+                if (window.scrollY > 10) {
+                    header.classList.add('py-2', 'shadow-lg');
+                    header.classList.remove('py-3', 'shadow-md');
+                } else {
+                    header.classList.add('py-3', 'shadow-md');
+                    header.classList.remove('py-2', 'shadow-lg');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+    
